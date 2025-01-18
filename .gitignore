@@ -1,5 +1,40 @@
+# Virtuelle Umgebungen
+venv/
+.env/
+.virtualenv/
+
+# Python-Cache-Dateien
 __pycache__/
-*.pyc
+*.py[cod]
 *.pyo
+
+# Distribution/Packaging
+build/
+dist/
+*.egg-info/
+*.egg
+
+# IDEs und Editoren
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Logdateien
+*.log
+
+# Betriebssystem-Spezifisches
+.DS_Store  # macOS
+Thumbs.db  # Windows
+
+# Testdateien
+.coverage
 .pytest_cache/
+
+# Umgebungsdateien (z. B. mit sensiblen Daten)
+.env
+*.env
+
+# Jupyter Notebook Checkpoints
 .ipynb_checkpoints/
