@@ -7,14 +7,14 @@ on:
 
 jobs:
   pipeline:
-    runs-on: ubuntu-22.04  # Stabilität gewährleisten, kann auf ubuntu-24.04 geändert werden
+    runs-on: ubuntu-22.04  # Du kannst auf ubuntu-24.04 umstellen, falls gewünscht
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4  # Aktualisiert auf die neueste Version
+      uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v4  # Aktualisiert auf v4
+      uses: actions/setup-python@v4
       with:
         python-version: "3.11"
 
@@ -33,11 +33,15 @@ jobs:
       run: python scripts/evaluate_model.py
 
     - name: Upload Model
-      uses: actions/upload-artifact@v4  # Aktualisiert auf v4 zur Vermeidung von Deprecation-Warnungen
+      uses: actions/upload-artifact@v4
       with:
         name: trained-model
         path: models/best_house_price_model.pkl
 
-    - name: Cleanup
-      run: rm -rf models/*.pkl  # Löscht das Modell lokal nach dem Upload, um Speicherplatz zu sparen
+    - name: Upload Evaluation Results
+      uses: actions/upload-artifact@v4
+      with:
+        name: evaluation-results
+        path: results/*.png
+
 
