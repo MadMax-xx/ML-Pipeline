@@ -7,14 +7,14 @@ on:
 
 jobs:
   pipeline:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04  # Du kannst auf ubuntu-24.04 umstellen, falls gewünscht
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: "3.11"
 
@@ -31,3 +31,17 @@ jobs:
 
     - name: Evaluate Model
       run: python scripts/evaluate_model.py
+
+    - name: Upload Model
+      uses: actions/upload-artifact@v4
+      with:
+        name: trained-model
+        path: models/best_house_price_model.pkl
+
+    - name: Upload Evaluation Results
+      uses: actions/upload-artifact@v4
+      with:
+        name: evaluation-results
+        path: results/*.png
+
+
