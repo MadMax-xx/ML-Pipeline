@@ -7,35 +7,48 @@ import logging
 
 logging.basicConfig(level=logging.INFO)
 
-def evaluate_model(data_path, model_path):
+def evaluate_model(data_path, model_path, feature_path, results_dir="results"):
     """
     Bewertet das trainierte Modell und visualisiert die Ergebnisse.
     """
     try:
-        data = pd.read_csv(data_path, compression='zip')
-        X = data.drop(columns=["SalePrice"])
+        # Erstelle das Verzeichnis für Ergebnisse, falls nicht vorhanden
+        os.makedirs(results_dir, exist_ok=True)
+
+        # Lade die CSV-Datei
+        data = pd.read_csv(data_path)
+
+        # Sicherstellen, dass die Features mit dem Training übereinstimmen
+        feature_names = joblib.load(feature_path)
+        if not set(feature_names).issubset(data.columns):
+            raise ValueError("Feature-Namen stimmen nicht mit den Daten überein")
+
+        X = data[feature_names]
         y_true = data["SalePrice"]
 
+        # Lade das Modell und mache Vorhersagen
         model = joblib.load(model_path)
         y_pred = model.predict(X)
 
+        # Berechne die Evaluationsmetriken
         mae = mean_absolute_error(y_true, y_pred)
         mse = mean_squared_error(y_true, y_pred)
         r2 = r2_score(y_true, y_pred)
-        logging.info(f"MAE: {mae}, MSE: {mse}, R²: {r2}")
+        logging.info(f"MAE: {mae:.2f}, MSE: {mse:.2f}, R²: {r2:.2f}")
 
-        results_dir = "results/"
-        os.makedirs(results_dir, exist_ok=True)
-
+        # Echte vs. Vorhergesagte Werte visualisieren
         plt.figure(figsize=(10, 6))
         plt.scatter(y_true, y_pred, alpha=0.5)
-        plt.plot([y_true.min(), y_true.max()], [y_true.min(), y_true.max()], "r--")
+        plt.plot([y_true.min(), y_true.max()], [y_true.min(), y_true.max()], "r--", label="Ideal")
         plt.xlabel("Echte Preise")
         plt.ylabel("Vorhergesagte Preise")
         plt.title("Echte vs. Vorhergesagte Preise")
-        plt.savefig(f"{results_dir}/true_vs_predicted.png")
-        plt.close()
+        plt.legend()
+        plt.grid()
+        plt.savefig(os.path.join(results_dir, "true_vs_predicted.png"))
+        plt.show()
 
+        # Residuenplot erstellen
         residuals = y_true - y_pred
         plt.figure(figsize=(10, 6))
         plt.scatter(y_pred, residuals, alpha=0.5)
@@ -43,11 +56,16 @@ def evaluate_model(data_path, model_path):
         plt.xlabel("Vorhergesagte Preise")
         plt.ylabel("Residuen")
         plt.title("Residuenplot")
-        plt.savefig(f"{results_dir}/residuals.png")
-        plt.close()
+        plt.grid()
+        plt.savefig(os.path.join(results_dir, "residuals.png"))
+        plt.show()
 
     except Exception as e:
         logging.error(f"Fehler bei der Evaluierung: {e}")
 
 if __name__ == "__main__":
-    evaluate_model("data/processed_house_prices.csv.zip", "models/best_house_price_model.pkl")
+    evaluate_model(
+        "data/processed_house_prices.csv",
+        "models/best_house_price_model.pkl",
+        "models/feature_names.pkl"
+    )

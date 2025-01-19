@@ -43,4 +43,3 @@ def preprocess_data(file_path, output_path):
 
 if __name__ == "__main__":
     preprocess_data("data/train.csv", "data/processed_house_prices.csv")
-
