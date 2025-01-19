@@ -5,9 +5,9 @@ logging.basicConfig(level=logging.INFO)
 
 def preprocess_data(file_path, output_path):
     """
-    Verarbeitet die Rohdaten und speichert sie als komprimierte CSV.
+    Verarbeitet die Rohdaten und speichert sie als CSV-Datei.
     :param file_path: Pfad zur Rohdaten-CSV.
-    :param output_path: Pfad zur verarbeiteten CSV.
+    :param output_path: Pfad zur verarbeiteten CSV-Datei.
     """
     try:
         # Daten laden
@@ -35,11 +35,12 @@ def preprocess_data(file_path, output_path):
         # Kategorische Merkmale in numerische umwandeln
         data = pd.get_dummies(data, columns=["Neighborhood", "HouseStyle"], drop_first=True)
 
-        # Verarbeitete Daten speichern (komprimierte CSV)
-        data.to_csv(output_path, index=False, compression='zip')
+        # Verarbeitete Daten speichern als CSV (ohne ZIP-Komprimierung)
+        data.to_csv(output_path, index=False)
         logging.info(f"Verarbeitete Daten erfolgreich gespeichert: {output_path}")
     except Exception as e:
         logging.error(f"Fehler bei der Datenverarbeitung: {e}")
 
 if __name__ == "__main__":
-    preprocess_data("data/train.csv", "data/processed_house_prices.csv.zip")
+    preprocess_data("data/train.csv", "data/processed_house_prices.csv")
+
