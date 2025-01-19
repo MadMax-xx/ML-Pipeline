@@ -31,3 +31,10 @@ jobs:
 
     - name: Evaluate Model
       run: python scripts/evaluate_model.py
+
+    - name: Upload Model
+      uses: actions/upload-artifact@v3
+      with:
+        name: trained-model
+        path: models/best_house_price_model.pkl
+
